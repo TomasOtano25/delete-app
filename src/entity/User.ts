@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from "typeorm";
-import { ObjectType, Field, ID } from "type-graphql";
+import { ObjectType, Field, ID, Root } from "type-graphql";
 
 @ObjectType()
 @Entity()
@@ -27,8 +27,21 @@ export default class User extends BaseEntity {
   @Column({ default: true })
   isActive: boolean;
 
+  // @Field(() => String, { nullable: true })
+  // name: string | null;
+
   @Field(() => String, { nullable: true })
-  name: string;
+  name(@Root() parent: User): string | null {
+    const { firstName, lastName } = parent;
+
+    return firstName || lastName
+      ? `${firstName ? firstName : ""} ${lastName ? lastName : ""}`.trim()
+      : null;
+  }
+
+  @Field(() => [String])
+  @Column({ type: "simple-array", default: "CUSTOMER" })
+  roles: string[];
 
   @Field()
   @Column({ type: "text", unique: true })
@@ -36,6 +49,9 @@ export default class User extends BaseEntity {
 
   @Column()
   password: string;
+
+  @Column("bool", { default: false })
+  confirmed: boolean;
 
   @Field()
   @CreateDateColumn()

@@ -19,7 +19,6 @@ yarn add -D @types/express @types/graphql @types/node nodemon ts-node typescript
     "outDir": "./dist",
     "moduleResolution": "node",
     "declaration": false,
-
     "composite": false,
     "removeComments": true,
     "noImplicitAny": true,
@@ -30,7 +29,8 @@ yarn add -D @types/express @types/graphql @types/node nodemon ts-node typescript
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
@@ -40,6 +40,7 @@ yarn add -D @types/express @types/graphql @types/node nodemon ts-node typescript
   "exclude": ["node_modules"],
   "include": ["./src/**/*.tsx", "./src/**/*.ts"]
 }
+
 ```
 
 3. Create "./src/index.ts"
@@ -272,3 +273,128 @@ export class RegisterResolver {
 }
 ```
 
+## Modulo de validacion
+
+10. Install "ts-node-dev":
+
+```bash
+yarn add -D ts-node-dev
+```
+
+11. Update "package.json": 
+
+```json
+"scripts": {
+    "start": "ts-node-dev --respawn src/index.ts"
+  },
+```
+
+12. Install "class-validator":
+
+```bash
+yarn add class-validator
+```
+
+13. Create "src/modules/user/register/isEmailAlreadyExist.ts":
+
+```ts
+import {
+  ValidationOptions,
+  registerDecorator,
+  ValidatorConstraintInterface,
+  ValidatorConstraint
+} from "class-validator";
+
+import User from "../../../entity/User";
+
+@ValidatorConstraint({ async: true })
+export class IsEmailAlreayExistConstraint
+  implements ValidatorConstraintInterface {
+  validate(email: string): boolean | Promise<boolean> {
+    return User.findOne({ where: { email } }).then(user => {
+      if (user) return false;
+      return true;
+    });
+  }
+}
+
+export function IsEmailAlreayExist(validationOptions?: ValidationOptions) {
+  return function(object: Object, propertyName: string) {
+    registerDecorator({
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      constraints: [],
+      validator: IsEmailAlreayExistConstraint
+    });
+  };
+}
+```
+
+14. Sustituir los Argumentos por un InputType, creando el documento "src/modules/user/register/RegisterInput.ts":
+
+```ts
+import { InputType, Field } from "type-graphql";
+import { IsEmail, Length, MinLength } from "class-validator";
+
+import { IsEmailAlreayExist } from "./isEmailAlreadyExist";
+
+@InputType()
+export class RegisterInput {
+  @Field(() => String, { nullable: true })
+  @Length(0, 255)
+  firstName?: string;
+
+  @Field(() => String, { nullable: true })
+  @Length(0, 255)
+  lastName?: string;
+
+  @Field()
+  @IsEmail()
+  @IsEmailAlreayExist({ message: "email already in use" })
+  email: string;
+
+  @Field()
+  @MinLength(4)
+  password: string;
+}
+```
+
+15. Update "src/modules/user/Register.ts":
+
+```ts
+// @Resolver(User)
+@Resolver()
+export class RegisterResolver {
+```
+
+```ts
+ @Mutation(() => User)
+  async register(@Arg("data")
+  {
+    firstName,
+    lastName,
+    email,
+    password
+  }: RegisterInput): Promise<User> {
+```
+
+16. Update "src/index.ts":
+
+```ts
+import { buildSchema, formatArgumentValidationError } from "type-graphql";
+
+const apolloServer = new ApolloServer({
+    schema,
+    formatError: formatArgumentValidationError
+  });
+```
+
+## Modulo de login
+
+17. Intallar dependencias:
+
+```bash
+yarn add express-session connect-redis ioredis cors
+yarn add -D @types/express-session @types/connect-redis @types/ioredis @types/cors
+```

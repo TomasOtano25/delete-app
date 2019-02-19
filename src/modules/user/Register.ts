@@ -1,36 +1,38 @@
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  FieldResolver,
-  Root
-} from "type-graphql";
-import * as bcrypt from "bcryptjs";
+import { Resolver, Query, Mutation, Arg, UseMiddleware } from "type-graphql";
+import bcrypt from "bcryptjs";
 
 import User from "../../entity/User";
+import { RegisterInput } from "./register/RegisterInput";
+import { isAuth } from "../../middleware/isAuth";
+import { logger } from "../../middleware/logger";
 
-@Resolver(User)
+// @Resolver(User)
+@Resolver()
 export class RegisterResolver {
+  // @Authorized()
+  @UseMiddleware(isAuth, logger)
   @Query(() => String, { name: "helloWorld", nullable: true })
   async hello() {
     return "Hello World!";
   }
 
-  @FieldResolver()
-  async name(@Root() parent: User) {
-    return `${parent.firstName ? parent.firstName : ""} ${
-      parent.lastName ? parent.lastName : ""
-    }`.trim();
-  }
+  // @FieldResolver()
+  // async name(@Root() parent: User) {
+  //   const { firstName, lastName } = parent;
+
+  //   return firstName || lastName
+  //     ? `${firstName ? firstName : ""} ${lastName ? lastName : ""}`.trim()
+  //     : null;
+  // }
 
   @Mutation(() => User)
-  async register(
-    @Arg("firstName", { nullable: true }) firstName: string,
-    @Arg("lastName", { nullable: true }) lastName: string,
-    @Arg("email") email: string,
-    @Arg("password") password: string
-  ): Promise<User> {
+  async register(@Arg("data")
+  {
+    firstName,
+    lastName,
+    email,
+    password
+  }: RegisterInput): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await User.create({
