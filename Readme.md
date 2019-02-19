@@ -398,3 +398,16 @@ const apolloServer = new ApolloServer({
 yarn add express-session connect-redis ioredis cors
 yarn add -D @types/express-session @types/connect-redis @types/ioredis @types/cors
 ```
+
+Tarea Completar
+
+## Confirmacion de email
+
+18. Install dependencias:
+
+```bash
+yarn add nodemailer uuid
+yarn add -D @types/nodemailer @types/uuid
+yarn add dotenv-safe
+yarn add -D @types/dotenv-safe
+```

@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import dotnev from "dotenv-safe";
 import { ApolloServer } from "apollo-server-express";
 import Express from "express";
 import { buildSchema, formatArgumentValidationError } from "type-graphql";
@@ -12,12 +13,20 @@ import { redis } from "./redis";
 import { LoginResolver } from "./modules/user/Login";
 import { MeResolver } from "./modules/user/Me";
 import { customAuthChecker } from "./utils/customAuthChecker";
+import { ConfirmUserResolver } from "./modules/user/ConfirmUser";
+
+dotnev.config();
 
 const main = async () => {
   await createConnection();
 
   const schema = await buildSchema({
-    resolvers: [RegisterResolver, LoginResolver, MeResolver],
+    resolvers: [
+      RegisterResolver,
+      LoginResolver,
+      MeResolver,
+      ConfirmUserResolver
+    ],
     authChecker: customAuthChecker
   });
 
