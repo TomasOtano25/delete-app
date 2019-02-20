@@ -411,3 +411,23 @@ yarn add -D @types/nodemailer @types/uuid
 yarn add dotenv-safe
 yarn add -D @types/dotenv-safe
 ```
+
+## Logout
+
+## Testing
+
+### Testing Setup a test environment
+
+
+Install dependencias:
+
+```bash
+ yarn add -D jest typescript ts-jest @types/jest
+```
+
+Creating config file:
+
+```bash
+yarn ts-jest config:init
+```bash
+
