@@ -1,9 +1,8 @@
-import { Resolver, Mutation, Arg } from "type-graphql";
+import { Arg, Mutation, Resolver } from "type-graphql";
 import { v4 } from "uuid";
-
-import { sendEmail } from "../../utils/sendEmail";
-import { redis } from "../../redis";
 import User from "../../entity/User";
+import { redis } from "../../redis";
+import { sendEmail } from "../../utils/sendEmail";
 import { forgotPasswordPrefix } from "../constants/redisPrefix";
 
 @Resolver()

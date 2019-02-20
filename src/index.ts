@@ -2,7 +2,7 @@ import "reflect-metadata";
 import dotnev from "dotenv-safe";
 import { ApolloServer } from "apollo-server-express";
 import Express from "express";
-import { buildSchema, formatArgumentValidationError } from "type-graphql";
+import { formatArgumentValidationError } from "type-graphql";
 import { createConnection } from "typeorm";
 import session from "express-session";
 import connectRedis from "connect-redis";
@@ -12,7 +12,8 @@ import cors from "cors";
 import { redis } from "./redis";
 // import { LoginResolver } from "./modules/user/Login";
 // import { MeResolver } from "./modules/user/Me";
-import { customAuthChecker } from "./utils/customAuthChecker";
+// import { customAuthChecker } from "./utils/customAuthChecker";
+import { createSchema } from "./utils/createSchema";
 // import { ConfirmUserResolver } from "./modules/user/ConfirmUser";
 
 dotnev.config();
@@ -23,10 +24,12 @@ const main = async () => {
   // LoginResolver,
   // MeResolver,
   // ConfirmUserResolver
-  const schema = await buildSchema({
-    resolvers: [__dirname + "/modules/**/*.ts"],
-    authChecker: customAuthChecker
-  });
+  const schema = await createSchema();
+
+  // const schema = await buildSchema({
+  //   resolvers: [__dirname + "/modules/**/*.ts"],
+  //   authChecker: customAuthChecker
+  // });
 
   const apolloServer = new ApolloServer({
     schema,

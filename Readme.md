@@ -429,5 +429,10 @@ Creating config file:
 
 ```bash
 yarn ts-jest config:init
-```bash
+```
 
+
+```bash
+yarn add faker
+yarn add -D faker @types/faker
+```

@@ -3,10 +3,11 @@ import { IsEmail, Length } from "class-validator";
 
 import { IsEmailAlreayExist } from "./isEmailAlreadyExist";
 import { PasswordMixin } from "../../shared/PasswordInput";
-import { OkMixin } from "../../shared/OkMixin";
+// import { OkMixin } from "../../shared/OkMixin";
 
 @InputType()
-export class RegisterInput extends OkMixin(PasswordMixin(class {})) {
+// export class RegisterInput extends OkMixin(PasswordMixin(class {})) {
+export class RegisterInput extends PasswordMixin(class {}) {
   @Field(() => String, { nullable: true })
   @Length(0, 255)
   firstName?: string;
