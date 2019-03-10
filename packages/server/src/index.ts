@@ -1,43 +1,46 @@
-import "reflect-metadata";
 import dotnev from "dotenv-safe";
+dotnev.config();
+
+import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
 import Express from "express";
-import { formatArgumentValidationError } from "type-graphql";
-import { createConnection } from "typeorm";
+//import { formatArgumentValidationError } from "type-graphql";
+import { createTypeormConnection } from "./createConnection";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import cors from "cors";
+import { redis } from "./redis";
+import { createSchema } from "./utils/createSchema";
+import { logManager } from "./utils/logManager";
 
 // import { RegisterResolver } from "./modules/user/Register";
-import { redis } from "./redis";
+
 // import { LoginResolver } from "./modules/user/Login";
 // import { MeResolver } from "./modules/user/Me";
 // import { customAuthChecker } from "./utils/customAuthChecker";
-import { createSchema } from "./utils/createSchema";
+
 // import { ConfirmUserResolver } from "./modules/user/ConfirmUser";
 
-dotnev.config();
+export const logger = logManager();
+logger.info("Loading environment...");
 
-const main = async () => {
-  await createConnection();
-  // RegisterResolver,
-  // LoginResolver,
-  // MeResolver,
-  // ConfirmUserResolver
+const startServer = async () => {
+  logger.info("Connecting database...");
+  const connection = await createTypeormConnection();
+  if (connection) {
+    logger.info("Database connected.");
+  }
+
+  logger.info("Creating express server...");
+  const app = Express();
+
+  logger.info("Creating gql server...");
   const schema = await createSchema();
-
-  // const schema = await buildSchema({
-  //   resolvers: [__dirname + "/modules/**/*.ts"],
-  //   authChecker: customAuthChecker
-  // });
-
   const apolloServer = new ApolloServer({
     schema,
-    formatError: formatArgumentValidationError,
+    /*formatError: formatArgumentValidationError,*/
     context: ({ req, res }: any) => ({ req, res })
   });
-
-  const app = Express();
 
   const RedisStore = connectRedis(session);
 
@@ -73,4 +76,4 @@ const main = async () => {
   });
 };
 
-main();
+startServer();

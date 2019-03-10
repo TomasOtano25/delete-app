@@ -1,12 +1,14 @@
-{
-  "name": "default",
-  "type": "postgres",
-  "host": "localhost",
-  "port": 5432,
-  "username": "postgres",
-  "password": "1212",
-  "database": "movies_app_default",
-  "synchronize": true,
-  "logging": true,
-  "entities": ["src/entity/*.*"]
-}
+[
+  {
+    "name": "development",
+    "type": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "1212",
+    "database": "movies_app_default",
+    "synchronize": true,
+    "logging": true,
+    "entities": ["src/entity/**/*.*"]
+  }
+]
