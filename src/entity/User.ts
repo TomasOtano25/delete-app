@@ -54,10 +54,10 @@ export default class User extends BaseEntity {
   confirmed: boolean;
 
   @Field()
-  @CreateDateColumn()
+  @CreateDateColumn({ type: "timestamp with time zone" })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: "timestamp with time zone" })
   updatedAt: Date;
 }
