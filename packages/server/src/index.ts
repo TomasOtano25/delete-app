@@ -12,6 +12,8 @@ import cors from "cors";
 import { redis } from "./redis";
 import { createSchema } from "./utils/createSchema";
 import { logManager } from "./utils/logManager";
+import { getConnection } from "typeorm";
+import { setupErrorHandling } from "./utils/shutdown";
 
 // import { RegisterResolver } from "./modules/user/Register";
 
@@ -71,8 +73,15 @@ const startServer = async () => {
 
   apolloServer.applyMiddleware({ app });
 
-  app.listen(4000, () => {
+  const nodeServer = app.listen(4000, () => {
     console.log(`Server started on http://localhost:4000/graphql`);
+  });
+
+  setupErrorHandling({
+    db: getConnection(),
+    redisClient: redis,
+    logger: logger,
+    nodeServer: nodeServer
   });
 };
 
