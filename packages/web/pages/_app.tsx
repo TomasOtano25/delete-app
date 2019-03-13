@@ -1,7 +1,10 @@
 import App, { Container } from "next/app";
 import React from "react";
 import { ApolloProvider } from "react-apollo";
+
 import withApolloClient from "../lib/with-apollo-client";
+
+import { appWithTranslation } from "../i18n";
 
 class MyApp extends App {
   render() {
@@ -16,4 +19,4 @@ class MyApp extends App {
   }
 }
 
-export default withApolloClient(MyApp);
+export default appWithTranslation(withApolloClient(MyApp));
