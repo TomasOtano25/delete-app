@@ -4,7 +4,10 @@ const path = require("path");
 module.exports = async ({ config }) => {
   config.module.rules.push({
     test: /\.(ts|tsx)$/,
-    loader: require.resolve("awesome-typescript-loader")
+    loader: [
+      require.resolve("awesome-typescript-loader"),
+      require.resolve("react-docgen-typescript-loader")
+    ]
   });
 
   //config.plugins.push(new TSDocgenPlugin()); // optional
