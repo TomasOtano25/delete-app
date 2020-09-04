@@ -30,7 +30,7 @@
     "pino": "^5.11.1",
     "pino-pretty": "^2.5.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.16.0",
+    "type-graphql": "^0.17.6",
     "typeorm": "^0.2.13",
     "uuid": "^3.3.2"
   },
